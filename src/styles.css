@@ -1395,3 +1395,243 @@ button:focus-visible {
     box-shadow: inset 0 0 1.75rem rgba(255, 255, 255, 0.48), 0 0 1.6rem rgba(103, 232, 249, 0.55);
   }
 }
+
+@media (min-width: 861px) {
+  body {
+    overflow: hidden;
+    background: #020b1f;
+  }
+
+  .app-shell {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: block;
+    padding: 0;
+    overflow: hidden;
+    background: #020b1f;
+  }
+
+  .app-shell::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100vw, calc(100vh * 16 / 9));
+    width: max(100vw, calc(100svh * 16 / 9));
+    height: max(100vh, calc(100vw * 9 / 16));
+    height: max(100svh, calc(100vw * 9 / 16));
+    transform: translate(-50%, -50%);
+    background: url("../assets/kpss-recall-mvp-screenshot.png") center / cover no-repeat;
+  }
+
+  .deck-rail,
+  .status-rail,
+  .parliament-scene {
+    display: none;
+  }
+
+  .study-stage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    width: max(100vw, calc(100vh * 16 / 9));
+    width: max(100vw, calc(100svh * 16 / 9));
+    height: max(100vh, calc(100vw * 9 / 16));
+    height: max(100svh, calc(100vw * 9 / 16));
+    min-height: 0;
+    overflow: visible;
+    border-radius: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  .recall-stack {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: auto;
+    min-height: 0;
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .recall-card {
+    position: absolute;
+    left: 32.55%;
+    top: 24.95%;
+    width: 34.15%;
+    height: 55.9%;
+    padding: 0;
+    color: #0b1f3a;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .card-ribbon,
+  .question-chip {
+    display: none;
+  }
+
+  .card-header {
+    position: absolute;
+    left: 13.6%;
+    top: 7.5%;
+    width: 72%;
+    min-height: 10%;
+    display: block;
+    padding: 0;
+  }
+
+  .card-header p {
+    margin: 0;
+    color: #0c7496;
+    font-size: clamp(0.72rem, 0.76vw, 0.95rem);
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .card-header h1 {
+    margin: 0.18rem 0 0;
+    color: #0b1f3a;
+    font-size: clamp(1.12rem, 1.55vw, 1.72rem);
+    font-weight: 950;
+    line-height: 1.02;
+  }
+
+  .prompt-panel {
+    position: absolute;
+    left: 6.2%;
+    right: 6.2%;
+    top: 18.4%;
+    height: 36.1%;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 2.2% 5%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .prompt-panel p {
+    max-width: 92%;
+    color: #071a31;
+    font-size: clamp(1.08rem, 1.75vw, 2.05rem);
+    font-weight: 950;
+    line-height: 1.16;
+    text-align: center;
+  }
+
+  .answer-panel {
+    position: absolute;
+    left: 6.2%;
+    right: 6.2%;
+    top: 61.8%;
+    height: 17.2%;
+    min-height: 0;
+    display: grid;
+    align-content: center;
+    margin: 0;
+    padding: 0 4.8%;
+    color: #23425c;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .answer-panel span {
+    padding: 0;
+    color: #8594a5;
+    font-size: clamp(0.86rem, 0.9vw, 1rem);
+    font-weight: 900;
+    text-align: center;
+  }
+
+  .answer-panel strong {
+    color: #102f4d;
+    font-size: clamp(0.92rem, 1.05vw, 1.18rem);
+    font-weight: 950;
+    line-height: 1.16;
+  }
+
+  .answer-panel p {
+    margin: 0.38rem 0 0;
+    color: #365067;
+    font-size: clamp(0.76rem, 0.88vw, 0.98rem);
+    line-height: 1.42;
+  }
+
+  .reveal-button {
+    position: absolute;
+    left: 27.6%;
+    bottom: 5.4%;
+    width: 44.8%;
+    height: 10.5%;
+    min-height: 0;
+    margin: 0;
+    color: #062742;
+    border: 0;
+    border-radius: 999rem;
+    background: transparent;
+    box-shadow: none;
+    font-size: clamp(0.82rem, 0.9vw, 1rem);
+    font-weight: 950;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.42);
+  }
+
+  .reveal-button:hover {
+    filter: none;
+  }
+
+  .feedback-line {
+    display: none;
+  }
+
+  .review-dock {
+    position: absolute;
+    left: 33.72%;
+    top: 83.98%;
+    width: 32.72%;
+    height: 10.2%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4.1%;
+    padding: 0.6% 0.8%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .review-button {
+    min-height: 0;
+    display: grid;
+    place-items: end center;
+    padding: 0 0 14%;
+    color: #fff;
+    border: 0;
+    border-radius: 0;
+    background: transparent !important;
+    box-shadow: none;
+    font-size: clamp(0.72rem, 0.82vw, 0.95rem);
+    font-weight: 950;
+    line-height: 1;
+    text-shadow: 0 2px 0 rgba(0, 27, 51, 0.4);
+  }
+
+  .review-button span {
+    display: none;
+  }
+
+  .review-button:hover {
+    transform: none;
+    filter: brightness(1.08);
+  }
+}

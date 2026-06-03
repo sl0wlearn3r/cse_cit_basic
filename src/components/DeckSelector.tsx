@@ -1,14 +1,12 @@
+import { studyModes, type StudyModeId } from "../content/studyModes";
+
 type DeckSelectorProps = {
+  activeMode: StudyModeId;
   totalCards: number;
   dueCount: number;
+  onModeChange: (modeId: StudyModeId) => void;
+  onOpenSettings: () => void;
 };
-
-const deckItems = [
-  { label: "Bellek Kartları", icon: "cards" },
-  { label: "Karıştırılan Bilgiler", icon: "puzzle" },
-  { label: "Güncel Kurallar", icon: "search" },
-  { label: "Eski / Yeni Ayrımı", icon: "badge" },
-];
 
 function RailIcon({ name }: { name: string }) {
   return (
@@ -18,8 +16,15 @@ function RailIcon({ name }: { name: string }) {
   );
 }
 
-export function DeckSelector({ totalCards, dueCount }: DeckSelectorProps) {
-  const progressWidth = `${Math.max(8, ((totalCards - dueCount) / totalCards) * 100)}%`;
+export function DeckSelector({
+  activeMode,
+  totalCards,
+  dueCount,
+  onModeChange,
+  onOpenSettings,
+}: DeckSelectorProps) {
+  const safeTotalCards = Math.max(1, totalCards);
+  const progressWidth = `${Math.max(8, ((totalCards - dueCount) / safeTotalCards) * 100)}%`;
 
   return (
     <aside className="deck-rail" aria-label="Kart seçenekleri">
@@ -31,18 +36,25 @@ export function DeckSelector({ totalCards, dueCount }: DeckSelectorProps) {
         <span style={{ width: progressWidth }} />
       </div>
       <nav className="deck-nav">
-        {deckItems.map((item, index) => (
+        {studyModes.map((item) => (
           <button
-            className={`rail-button ${index === 0 ? "is-active" : ""}`}
+            aria-pressed={item.id === activeMode}
+            className={`rail-button ${item.id === activeMode ? "is-active" : ""}`}
             key={item.label}
             type="button"
+            onClick={() => onModeChange(item.id)}
           >
             <RailIcon name={item.icon} />
             <span>{item.label}</span>
           </button>
         ))}
       </nav>
-      <button className="settings-button" type="button" aria-label="Ayarlar">
+      <button
+        className="settings-button"
+        type="button"
+        aria-label="Ayarlar"
+        onClick={onOpenSettings}
+      >
         <span aria-hidden="true">⚙</span>
       </button>
     </aside>

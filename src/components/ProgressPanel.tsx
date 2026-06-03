@@ -3,6 +3,7 @@ import { MnemonicPanel } from "./MnemonicPanel";
 import type { RecallCard } from "../types/content";
 
 type ProgressPanelProps = {
+  activeModeLabel: string;
   progress: ReviewProgress;
   dueCount: number;
   totalCards: number;
@@ -20,6 +21,7 @@ function ratingTotal(progress: ReviewProgress): number {
 }
 
 export function ProgressPanel({
+  activeModeLabel,
   progress,
   dueCount,
   totalCards,
@@ -28,11 +30,13 @@ export function ProgressPanel({
 }: ProgressPanelProps) {
   const satisfaction = Math.round(progress.satisfaction);
   const completed = Math.max(0, totalCards - dueCount);
+  const safeTotalCards = Math.max(1, totalCards);
 
   return (
     <aside className="status-rail" aria-label="İlerleme">
       <section className="stat-block trophy-block">
         <div className="stat-icon trophy" aria-hidden="true">🏆</div>
+        <span className="mode-chip">{activeModeLabel}</span>
         <div className="thin-meter">
           <span style={{ width: `${Math.min(100, ratingTotal(progress) * 8)}%` }} />
         </div>
@@ -44,7 +48,7 @@ export function ProgressPanel({
           <span className="clock-hand minute" />
         </div>
         <div className="progress-line">
-          <span style={{ width: `${Math.max(10, (completed / totalCards) * 100)}%` }} />
+          <span style={{ width: `${Math.max(10, (completed / safeTotalCards) * 100)}%` }} />
         </div>
         <h2>Tekrar Zamanı</h2>
         <p>{dueCount > 0 ? `${dueCount} kart sırada` : "Bugünlük tamamlandı"}</p>

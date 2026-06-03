@@ -6,6 +6,12 @@ import { RecallCard } from "../components/RecallCard";
 import { ReviewButtons } from "../components/ReviewButtons";
 import { starterDeck } from "../content/starterDeck";
 import {
+  matchesStudyMode,
+  studyModes,
+  type StudyModeId,
+} from "../content/studyModes";
+import {
+  createInitialProgress,
   getDueCards,
   loadProgress,
   recordReview,
@@ -32,12 +38,20 @@ function feedbackFor(rating: ReviewRating): string {
 }
 
 export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
-  const cardIds = useMemo(() => starterDeck.map((card) => card.id), []);
+  const allCardIds = useMemo(() => starterDeck.map((card) => card.id), []);
+  const [activeMode, setActiveMode] = useState<StudyModeId>("all");
   const [progress, setProgress] = useState<ReviewProgress>(() =>
-    loadProgress(cardIds, todayIso),
+    loadProgress(allCardIds, todayIso),
   );
   const [isRevealed, setIsRevealed] = useState(false);
   const [feedback, setFeedback] = useState<string>();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const filteredCards = useMemo(
+    () => starterDeck.filter((card) => matchesStudyMode(card, activeMode)),
+    [activeMode],
+  );
+  const cardIds = useMemo(() => filteredCards.map((card) => card.id), [filteredCards]);
 
   const dueCardIds = useMemo(
     () => getDueCards(cardIds, progress, todayIso),
@@ -65,9 +79,31 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     setIsRevealed(false);
   }
 
+  function handleModeChange(modeId: StudyModeId) {
+    setActiveMode(modeId);
+    setIsRevealed(false);
+    setFeedback(undefined);
+  }
+
+  function handleResetProgress() {
+    setProgress(createInitialProgress(allCardIds, todayIso));
+    setIsRevealed(false);
+    setFeedback(undefined);
+    setIsSettingsOpen(false);
+  }
+
+  const activeModeLabel =
+    studyModes.find((mode) => mode.id === activeMode)?.label ?? "Tüm Kartlar";
+
   return (
     <div className="app-shell">
-      <DeckSelector totalCards={starterDeck.length} dueCount={dueCardIds.length} />
+      <DeckSelector
+        activeMode={activeMode}
+        totalCards={filteredCards.length}
+        dueCount={dueCardIds.length}
+        onModeChange={handleModeChange}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+      />
 
       <main className="study-stage">
         <ParliamentScene />
@@ -83,12 +119,37 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
       </main>
 
       <ProgressPanel
+        activeModeLabel={activeModeLabel}
         currentCard={currentCard}
         dueCount={dueCardIds.length}
         isRevealed={isRevealed}
         progress={progress}
-        totalCards={starterDeck.length}
+        totalCards={filteredCards.length}
       />
+
+      {isSettingsOpen ? (
+        <div className="settings-backdrop">
+          <section
+            aria-labelledby="settings-title"
+            aria-modal="true"
+            className="settings-dialog"
+            role="dialog"
+          >
+            <h2 id="settings-title">Ayarlar</h2>
+            <p>
+              Tekrar geçmişini temizleyip kartları bugünün sırasına geri al.
+            </p>
+            <div className="settings-actions">
+              <button type="button" onClick={handleResetProgress}>
+                İlerlemeyi Sıfırla
+              </button>
+              <button type="button" onClick={() => setIsSettingsOpen(false)}>
+                Kapat
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }

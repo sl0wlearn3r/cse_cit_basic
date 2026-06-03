@@ -30,4 +30,31 @@ describe("App", () => {
     const saved = window.localStorage.getItem(reviewStorageKey);
     expect(saved).toContain("\"lastRating\":\"easy\"");
   });
+
+  it("filters the due queue from the left rail mode buttons", () => {
+    render(<App todayIso="2026-06-03" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Eski / Yeni Ayrımı" }));
+
+    expect(
+      screen.getByRole("heading", { name: "KHK ve kararname ayrımı" }),
+    ).toBeInTheDocument();
+  });
+
+  it("opens settings and resets stored review progress", () => {
+    render(<App todayIso="2026-06-03" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Cevabı Göster" }));
+    fireEvent.click(screen.getByRole("button", { name: "Çok Kolay" }));
+    expect(window.localStorage.getItem(reviewStorageKey)).toContain(
+      "\"lastRating\":\"easy\"",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Ayarlar" }));
+    fireEvent.click(screen.getByRole("button", { name: "İlerlemeyi Sıfırla" }));
+
+    expect(window.localStorage.getItem(reviewStorageKey)).not.toContain(
+      "\"lastRating\":\"easy\"",
+    );
+  });
 });

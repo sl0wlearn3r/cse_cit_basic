@@ -1404,6 +1404,10 @@ button:focus-visible {
 
   .app-shell {
     position: relative;
+    --reference-stage-width: min(100vw, calc(100vh * 1672 / 941));
+    --reference-stage-height: min(100vh, calc(100vw * 941 / 1672));
+    --reference-stage-width: min(100vw, calc(100svh * 1672 / 941));
+    --reference-stage-height: min(100svh, calc(100vw * 941 / 1672));
     min-height: 100vh;
     min-height: 100svh;
     display: block;
@@ -1418,12 +1422,10 @@ button:focus-visible {
     z-index: 0;
     left: 50%;
     top: 50%;
-    width: max(100vw, calc(100vh * 16 / 9));
-    width: max(100vw, calc(100svh * 16 / 9));
-    height: max(100vh, calc(100vw * 9 / 16));
-    height: max(100svh, calc(100vw * 9 / 16));
+    width: var(--reference-stage-width);
+    height: var(--reference-stage-height);
     transform: translate(-50%, -50%);
-    background: url("../assets/kpss-recall-mvp-screenshot.png") center / cover no-repeat;
+    background: url("../assets/kpss-recall-mvp-screenshot.png") center / 100% 100% no-repeat;
   }
 
   .parliament-scene {
@@ -1436,10 +1438,8 @@ button:focus-visible {
     left: 50%;
     top: 50%;
     z-index: 3;
-    width: max(100vw, calc(100vh * 16 / 9));
-    width: max(100vw, calc(100svh * 16 / 9));
-    height: max(100vh, calc(100vw * 9 / 16));
-    height: max(100svh, calc(100vw * 9 / 16));
+    width: var(--reference-stage-width);
+    height: var(--reference-stage-height);
     display: block;
     padding: 0;
     overflow: visible;
@@ -1458,20 +1458,17 @@ button:focus-visible {
 
   .deck-nav {
     position: absolute;
-    left: 2.24%;
-    top: 21.3%;
-    width: 8.16%;
-    height: 59.5%;
+    inset: 0;
     display: block;
-    pointer-events: auto;
+    pointer-events: none;
   }
 
   .rail-button {
     position: absolute;
-    left: 0;
-    width: 100%;
+    left: 2.2%;
+    width: 8.15%;
     min-height: 0;
-    height: 12.45%;
+    height: 10.35%;
     display: block;
     padding: 0;
     color: #e8fbff;
@@ -1483,28 +1480,28 @@ button:focus-visible {
     transition:
       background 150ms ease,
       box-shadow 150ms ease,
-      transform 150ms ease,
       filter 150ms ease;
+    pointer-events: auto;
   }
 
   .rail-button:nth-child(1) {
-    top: 0;
+    top: 21.38%;
   }
 
   .rail-button:nth-child(2) {
-    top: 19.8%;
+    top: 33.48%;
   }
 
   .rail-button:nth-child(3) {
-    top: 39.9%;
+    top: 45.55%;
   }
 
   .rail-button:nth-child(4) {
-    top: 60.1%;
+    top: 57.66%;
   }
 
   .rail-button:nth-child(5) {
-    top: 80%;
+    top: 69.95%;
   }
 
   .rail-icon {
@@ -1541,7 +1538,6 @@ button:focus-visible {
       0 0 0 0.18rem rgba(103, 232, 249, 0.48),
       0 0.7rem 1.25rem rgba(0, 14, 34, 0.35),
       inset 0 0 1.2rem rgba(103, 232, 249, 0.14);
-    transform: translateY(-0.16rem);
   }
 
   .rail-button.is-active {
@@ -1552,7 +1548,6 @@ button:focus-visible {
   }
 
   .rail-button:active {
-    transform: translateY(0.12rem) scale(0.985);
     box-shadow:
       0 0 0 0.16rem rgba(103, 232, 249, 0.38),
       inset 0 0.35rem 0.8rem rgba(0, 0, 0, 0.26);
@@ -1566,10 +1561,10 @@ button:focus-visible {
 
   .settings-button {
     position: absolute;
-    left: 4.1%;
-    top: 88.6%;
-    width: 4.9%;
-    height: 5.5%;
+    left: 3.95%;
+    top: 87.6%;
+    width: 5.25%;
+    height: 5.95%;
     display: block;
     min-height: 0;
     margin: 0;
@@ -1579,7 +1574,7 @@ button:focus-visible {
     background: rgba(103, 232, 249, 0.01);
     box-shadow: none;
     pointer-events: auto;
-    transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    transition: box-shadow 150ms ease, background 150ms ease;
   }
 
   .settings-button span {
@@ -1592,11 +1587,10 @@ button:focus-visible {
     box-shadow:
       0 0 0 0.16rem rgba(103, 232, 249, 0.46),
       0 0.7rem 1.1rem rgba(0, 14, 34, 0.34);
-    transform: translateY(-0.12rem);
   }
 
   .settings-button:active {
-    transform: translateY(0.1rem) scale(0.98);
+    background: rgba(103, 232, 249, 0.12);
   }
 
   .status-rail {
@@ -1653,7 +1647,7 @@ button:focus-visible {
 
   .clock-block {
     right: 2.98%;
-    top: 30.2%;
+    top: 32.05%;
     width: 13.3%;
     height: 9.6%;
     text-align: center;
@@ -1758,10 +1752,8 @@ button:focus-visible {
     left: 50%;
     top: 50%;
     z-index: 1;
-    width: max(100vw, calc(100vh * 16 / 9));
-    width: max(100vw, calc(100svh * 16 / 9));
-    height: max(100vh, calc(100vw * 9 / 16));
-    height: max(100svh, calc(100vw * 9 / 16));
+    width: var(--reference-stage-width);
+    height: var(--reference-stage-height);
     min-height: 0;
     overflow: visible;
     border-radius: 0;
@@ -1855,8 +1847,8 @@ button:focus-visible {
     position: absolute;
     left: 6.2%;
     right: 6.2%;
-    top: 61.8%;
-    height: 17.2%;
+    top: 62.35%;
+    height: 16.75%;
     min-height: 0;
     display: grid;
     align-content: center;
@@ -1866,6 +1858,7 @@ button:focus-visible {
     border: 0;
     border-radius: 0;
     background: transparent;
+    overflow: hidden;
   }
 
   .answer-panel span {
@@ -1878,16 +1871,24 @@ button:focus-visible {
 
   .answer-panel strong {
     color: #102f4d;
-    font-size: clamp(0.92rem, 1.05vw, 1.18rem);
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: clamp(0.76rem, 0.86vw, 1rem);
     font-weight: 950;
-    line-height: 1.16;
+    line-height: 1.1;
   }
 
   .answer-panel p {
-    margin: 0.38rem 0 0;
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0.24rem 0 0;
     color: #365067;
-    font-size: clamp(0.76rem, 0.88vw, 0.98rem);
-    line-height: 1.42;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    font-size: clamp(0.62rem, 0.7vw, 0.82rem);
+    line-height: 1.22;
   }
 
   .reveal-button {

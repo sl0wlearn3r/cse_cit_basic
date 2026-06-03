@@ -1626,7 +1626,7 @@ button:focus-visible {
     top: 50%;
     overflow: hidden;
     color: #b8fbff;
-    font-size: clamp(0.64rem, 0.68vw, 0.78rem);
+    font-size: clamp(0.56rem, 0.6vw, 0.72rem);
     font-weight: 950;
     line-height: 1;
     text-overflow: ellipsis;
@@ -1658,7 +1658,7 @@ button:focus-visible {
   .satisfaction-block h2 {
     margin: 0;
     color: #efffff;
-    font-size: clamp(0.76rem, 0.84vw, 1rem);
+    font-size: clamp(0.66rem, 0.72vw, 0.88rem);
     font-weight: 950;
     line-height: 1.05;
     text-shadow: 0 2px 0 rgba(0, 18, 38, 0.46);
@@ -1668,7 +1668,7 @@ button:focus-visible {
   .mnemonic-copy p {
     margin: 0.42rem 0 0;
     color: #b7e7f3;
-    font-size: clamp(0.66rem, 0.72vw, 0.84rem);
+    font-size: clamp(0.56rem, 0.62vw, 0.76rem);
     line-height: 1.25;
     text-align: center;
     text-shadow: 0 1px 0 rgba(0, 18, 38, 0.5);
@@ -1678,16 +1678,16 @@ button:focus-visible {
     right: 2.72%;
     top: 37.25%;
     width: 13.9%;
-    height: 25.1%;
+    height: 28.1%;
     display: grid;
     align-content: end;
   }
 
   .mnemonic-copy {
     position: absolute;
-    left: 7%;
-    right: 7%;
-    bottom: 2.7%;
+    left: 8%;
+    right: 8%;
+    bottom: 7.4%;
     display: block;
   }
 
@@ -1695,7 +1695,7 @@ button:focus-visible {
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
   }
 
   .streak-block {
@@ -1732,9 +1732,9 @@ button:focus-visible {
   }
 
   .satisfaction-block {
-    right: 2.98%;
+    right: 5.55%;
     top: 91.2%;
-    width: 13.1%;
+    width: 9.8%;
     text-align: center;
   }
 
@@ -1792,9 +1792,9 @@ button:focus-visible {
 
   .card-header {
     position: absolute;
-    left: 13.6%;
-    top: 7.5%;
-    width: 72%;
+    left: 13.8%;
+    top: 7.65%;
+    width: 65.5%;
     min-height: 10%;
     display: block;
     padding: 0;
@@ -1812,9 +1812,13 @@ button:focus-visible {
   .card-header h1 {
     margin: 0.18rem 0 0;
     color: #0b1f3a;
-    font-size: clamp(1.12rem, 1.55vw, 1.72rem);
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: clamp(1rem, 1.34vw, 1.48rem);
     font-weight: 950;
-    line-height: 1.02;
+    line-height: 1.04;
   }
 
   .prompt-panel {
@@ -1835,11 +1839,11 @@ button:focus-visible {
   }
 
   .prompt-panel p {
-    max-width: 92%;
+    max-width: 90%;
     color: #071a31;
-    font-size: clamp(1.08rem, 1.75vw, 2.05rem);
+    font-size: clamp(1rem, 1.56vw, 1.88rem);
     font-weight: 950;
-    line-height: 1.16;
+    line-height: 1.12;
     text-align: center;
   }
 
@@ -1899,36 +1903,32 @@ button:focus-visible {
     height: 10.5%;
     min-height: 0;
     margin: 0;
-    color: #062742;
-    border: 0.16rem solid rgba(176, 105, 13, 0.85);
+    color: #052944;
+    border: 0;
     border-radius: 999rem;
-    background: linear-gradient(180deg, rgba(50, 232, 238, 0.82), rgba(7, 169, 183, 0.88));
-    box-shadow:
-      0 0.48rem 0 rgba(98, 55, 7, 0.72),
-      0 0.9rem 1.15rem rgba(0, 20, 40, 0.36),
-      inset 0 0.18rem 0 rgba(255, 255, 255, 0.48);
+    background: transparent;
+    box-shadow: none;
     font-size: clamp(0.82rem, 0.9vw, 1rem);
     font-weight: 950;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.42);
-    transform: translateY(-0.18rem);
-    transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.42),
+      0 0.22rem 0.5rem rgba(0, 23, 44, 0.18);
+    transition: background 150ms ease, box-shadow 150ms ease, filter 150ms ease;
   }
 
   .reveal-button:hover {
-    filter: brightness(1.08);
-    transform: translateY(-0.34rem);
+    background: rgba(255, 255, 255, 0.06);
     box-shadow:
-      0 0.64rem 0 rgba(98, 55, 7, 0.72),
-      0 1.15rem 1.35rem rgba(0, 20, 40, 0.4),
-      inset 0 0.18rem 0 rgba(255, 255, 255, 0.52);
+      0 0 0 0.16rem rgba(255, 221, 121, 0.58),
+      0 0.7rem 1rem rgba(0, 20, 40, 0.3),
+      inset 0 0 1.1rem rgba(255, 255, 255, 0.16);
   }
 
   .reveal-button:active {
-    transform: translateY(0.16rem);
+    background: rgba(5, 48, 78, 0.08);
     box-shadow:
-      0 0.22rem 0 rgba(98, 55, 7, 0.72),
-      0 0.4rem 0.7rem rgba(0, 20, 40, 0.32),
-      inset 0 0.32rem 0.65rem rgba(0, 0, 0, 0.14);
+      0 0 0 0.12rem rgba(103, 232, 249, 0.42),
+      inset 0 0.35rem 0.85rem rgba(0, 0, 0, 0.16);
   }
 
   .feedback-line {
@@ -1955,20 +1955,19 @@ button:focus-visible {
     min-height: 0;
     display: grid;
     place-items: end center;
-    padding: 0 0 14%;
+    padding: 0 0 8%;
     color: #fff;
-    border: 0.16rem solid rgba(255, 255, 255, 0.28);
+    border: 0;
     border-radius: 0.72rem;
-    box-shadow:
-      0 0.38rem 0 rgba(1, 18, 36, 0.58),
-      0 0.72rem 1rem rgba(0, 20, 40, 0.3),
-      inset 0 0.16rem 0 rgba(255, 255, 255, 0.34);
+    background: transparent !important;
+    box-shadow: none;
     font-size: clamp(0.72rem, 0.82vw, 0.95rem);
     font-weight: 950;
     line-height: 1;
-    text-shadow: 0 2px 0 rgba(0, 27, 51, 0.4);
-    transform: translateY(-0.18rem);
-    transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    text-shadow:
+      0 2px 0 rgba(0, 27, 51, 0.46),
+      0 0.18rem 0.45rem rgba(0, 27, 51, 0.35);
+    transition: background 150ms ease, box-shadow 150ms ease, filter 150ms ease;
   }
 
   .review-button span {
@@ -1976,36 +1975,34 @@ button:focus-visible {
   }
 
   .review-button:hover {
-    transform: translateY(-0.36rem);
-    filter: brightness(1.08);
+    background: rgba(255, 255, 255, 0.07) !important;
     box-shadow:
-      0 0.55rem 0 rgba(1, 18, 36, 0.58),
-      0 0.95rem 1.2rem rgba(0, 20, 40, 0.34),
-      inset 0 0.16rem 0 rgba(255, 255, 255, 0.38);
+      0 0 0 0.15rem var(--review-glow),
+      0 0.68rem 1rem rgba(0, 20, 40, 0.32),
+      inset 0 0 1rem rgba(255, 255, 255, 0.18);
   }
 
   .review-button:active {
-    transform: translateY(0.12rem) scale(0.99);
+    background: rgba(0, 28, 48, 0.12) !important;
     box-shadow:
-      0 0.2rem 0 rgba(1, 18, 36, 0.58),
-      0 0.35rem 0.7rem rgba(0, 20, 40, 0.28),
-      inset 0 0.32rem 0.62rem rgba(0, 0, 0, 0.14);
+      0 0 0 0.12rem var(--review-glow),
+      inset 0 0.35rem 0.78rem rgba(0, 0, 0, 0.18);
   }
 
   .review-button.forgot {
-    background: linear-gradient(180deg, rgba(255, 109, 114, 0.92), rgba(229, 72, 77, 0.96)) !important;
+    --review-glow: rgba(255, 109, 114, 0.72);
   }
 
   .review-button.hard {
-    background: linear-gradient(180deg, rgba(255, 187, 76, 0.94), rgba(245, 158, 11, 0.96)) !important;
+    --review-glow: rgba(255, 187, 76, 0.72);
   }
 
   .review-button.remembered {
-    background: linear-gradient(180deg, rgba(52, 224, 232, 0.92), rgba(14, 165, 179, 0.96)) !important;
+    --review-glow: rgba(52, 224, 232, 0.72);
   }
 
   .review-button.easy {
-    background: linear-gradient(180deg, rgba(172, 219, 88, 0.94), rgba(117, 168, 44, 0.96)) !important;
+    --review-glow: rgba(172, 219, 88, 0.72);
   }
 }
 

@@ -1,17 +1,21 @@
 import type { RecallCard as RecallCardType } from "../types/content";
+import type {
+  InteractionResult,
+  QuestionInteraction,
+} from "../content/questionInteractions";
 
 type RecallCardProps = {
   card?: RecallCardType;
-  isRevealed: boolean;
+  question?: QuestionInteraction;
+  result?: InteractionResult;
   feedback?: string;
-  onReveal: () => void;
 };
 
 export function RecallCard({
   card,
-  isRevealed,
+  question,
+  result,
   feedback,
-  onReveal,
 }: RecallCardProps) {
   if (!card) {
     return (
@@ -35,29 +39,34 @@ export function RecallCard({
     );
   }
 
+  const isRevealed = Boolean(result);
+  const questionClass = question ? `question-${question.type}` : "";
+
   return (
-    <section className={`recall-card ${isRevealed ? "is-revealed" : ""}`}>
+    <section className={`recall-card ${questionClass} ${isRevealed ? "is-revealed" : ""}`}>
       <div className="card-ribbon" aria-hidden="true">★</div>
       <div className="card-header">
         <span className="question-chip">?</span>
         <div>
           <p>Bugünkü Tekrar</p>
+          {question ? <span className="question-type-pill">{question.label}</span> : null}
           <h1>{card.topic}</h1>
         </div>
       </div>
 
       <div className="prompt-panel">
-        <p>{card.customerFacing.prompt}</p>
+        <p>{question?.prompt ?? card.customerFacing.prompt}</p>
       </div>
 
       <div className={`answer-panel ${isRevealed ? "is-visible" : ""}`}>
-        {isRevealed ? (
+        {result ? (
           <>
-            <strong>{card.customerFacing.answer}</strong>
+            <strong>{result.message}</strong>
+            <p className="answer-summary">{card.customerFacing.answer}</p>
             <p>{card.customerFacing.explanation}</p>
           </>
         ) : (
-          <span>Yanıt gizli</span>
+          <span>{question?.instruction ?? "Yanıt gizli"}</span>
         )}
       </div>
 
@@ -65,11 +74,7 @@ export function RecallCard({
         <p className="feedback-line" role="status">
           {feedback ?? "Hatırlama düzeyini seç."}
         </p>
-      ) : (
-        <button className="reveal-button" type="button" onClick={onReveal}>
-          Cevabı Göster
-        </button>
-      )}
+      ) : null}
     </section>
   );
 }

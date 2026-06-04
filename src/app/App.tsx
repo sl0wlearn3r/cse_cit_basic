@@ -2,8 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { DeckSelector } from "../components/DeckSelector";
 import { ParliamentScene } from "../components/ParliamentScene";
 import { ProgressPanel } from "../components/ProgressPanel";
+import { QuestionDock } from "../components/QuestionDock";
 import { RecallCard } from "../components/RecallCard";
-import { ReviewButtons } from "../components/ReviewButtons";
+import {
+  buildQuestionInteraction,
+  type InteractionResult,
+} from "../content/questionInteractions";
 import { starterDeck } from "../content/starterDeck";
 import {
   matchesStudyMode,
@@ -43,7 +47,7 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
   const [progress, setProgress] = useState<ReviewProgress>(() =>
     loadProgress(allCardIds, todayIso),
   );
-  const [isRevealed, setIsRevealed] = useState(false);
+  const [interactionResult, setInteractionResult] = useState<InteractionResult>();
   const [feedback, setFeedback] = useState<string>();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -58,13 +62,26 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     [cardIds, progress, todayIso],
   );
   const currentCard = starterDeck.find((card) => card.id === dueCardIds[0]);
+  const currentCardIndex = currentCard
+    ? starterDeck.findIndex((card) => card.id === currentCard.id)
+    : -1;
+  const currentQuestion =
+    currentCard && currentCardIndex >= 0
+      ? buildQuestionInteraction(currentCard, starterDeck, currentCardIndex)
+      : undefined;
+  const isRevealed = Boolean(interactionResult);
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
 
-  function handleReveal() {
-    setIsRevealed(true);
+  useEffect(() => {
+    setInteractionResult(undefined);
+    setFeedback(undefined);
+  }, [currentCard?.id]);
+
+  function handleAnswer(result: InteractionResult) {
+    setInteractionResult(result);
     setFeedback(undefined);
   }
 
@@ -76,18 +93,18 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     const updated = recordReview(progress, currentCard.id, rating, todayIso);
     setProgress(updated);
     setFeedback(feedbackFor(rating));
-    setIsRevealed(false);
+    setInteractionResult(undefined);
   }
 
   function handleModeChange(modeId: StudyModeId) {
     setActiveMode(modeId);
-    setIsRevealed(false);
+    setInteractionResult(undefined);
     setFeedback(undefined);
   }
 
   function handleResetProgress() {
     setProgress(createInitialProgress(allCardIds, todayIso));
-    setIsRevealed(false);
+    setInteractionResult(undefined);
     setFeedback(undefined);
     setIsSettingsOpen(false);
   }
@@ -111,10 +128,17 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
           <RecallCard
             card={currentCard}
             feedback={feedback}
-            isRevealed={isRevealed}
-            onReveal={handleReveal}
+            question={currentQuestion}
+            result={interactionResult}
           />
-          {currentCard && isRevealed ? <ReviewButtons onRate={handleRate} /> : null}
+          {currentCard && currentQuestion ? (
+            <QuestionDock
+              question={currentQuestion}
+              result={interactionResult}
+              onAnswer={handleAnswer}
+              onRate={handleRate}
+            />
+          ) : null}
         </div>
       </main>
 

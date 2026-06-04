@@ -3,7 +3,7 @@ import { starterDeck } from "./starterDeck";
 
 describe("starterDeck", () => {
   it("contains a large set of focused recall cards", () => {
-    expect(starterDeck.length).toBeGreaterThanOrEqual(120);
+    expect(starterDeck).toHaveLength(143);
     expect(new Set(starterDeck.map((card) => card.id)).size).toBe(
       starterDeck.length,
     );

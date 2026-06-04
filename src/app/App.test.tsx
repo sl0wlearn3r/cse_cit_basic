@@ -9,18 +9,20 @@ describe("App", () => {
     window.localStorage.removeItem(reviewStorageKey);
   });
 
-  it("starts on the recall game with hidden answer state", () => {
+  it("starts on an interactive multiple-choice card", () => {
     render(<App todayIso="2026-06-03" />);
 
     expect(screen.getByText("Bugünkü Tekrar")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cevabı Göster" })).toBeInTheDocument();
+    expect(screen.getByText("Çoktan Seçmeli")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Gensoru/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cevabı Göster" })).not.toBeInTheDocument();
     expect(screen.queryByText("Unuttum")).not.toBeInTheDocument();
   });
 
-  it("reveals answer details and records a review rating", () => {
+  it("reveals answer details from a choice and records a review rating", () => {
     render(<App todayIso="2026-06-03" />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Cevabı Göster" }));
+    fireEvent.click(screen.getByRole("button", { name: /Gensoru/ }));
 
     expect(screen.getByText("Anımsama İpucu")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Çok Kolay" })).toBeInTheDocument();
@@ -29,6 +31,22 @@ describe("App", () => {
 
     const saved = window.localStorage.getItem(reviewStorageKey);
     expect(saved).toContain("\"lastRating\":\"easy\"");
+  });
+
+  it("moves to a fill-in-the-blank card after rating the first card", () => {
+    render(<App todayIso="2026-06-03" />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Gensoru/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Çok Kolay" }));
+
+    expect(screen.getByText("Boşluk Doldur")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Boşluk yanıtı"), {
+      target: { value: "Cumhurbaşkanı yardımcıları ve bakanlar" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Kontrol Et" }));
+
+    expect(screen.getByText("Doğru cevap.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Hatırladım" })).toBeInTheDocument();
   });
 
   it("filters the due queue from the left rail mode buttons", () => {
@@ -44,7 +62,7 @@ describe("App", () => {
   it("opens settings and resets stored review progress", () => {
     render(<App todayIso="2026-06-03" />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Cevabı Göster" }));
+    fireEvent.click(screen.getByRole("button", { name: /Gensoru/ }));
     fireEvent.click(screen.getByRole("button", { name: "Çok Kolay" }));
     expect(window.localStorage.getItem(reviewStorageKey)).toContain(
       "\"lastRating\":\"easy\"",

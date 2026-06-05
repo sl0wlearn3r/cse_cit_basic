@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - codex/third-implementation
       - second_implementation
   workflow_dispatch:
 

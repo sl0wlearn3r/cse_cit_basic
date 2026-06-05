@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { DeckSelector } from "../components/DeckSelector";
-import { ParliamentScene } from "../components/ParliamentScene";
 import { ProgressPanel } from "../components/ProgressPanel";
 import { QuestionDock } from "../components/QuestionDock";
 import { RecallCard } from "../components/RecallCard";
 import {
   buildQuestionInteraction,
   type InteractionResult,
+  type QuestionInteraction,
 } from "../content/questionInteractions";
 import { starterDeck } from "../content/starterDeck";
 import {
@@ -28,6 +28,8 @@ type AppProps = {
   todayIso?: string;
 };
 
+type PracticeMode = "recall" | "mixed";
+
 function feedbackFor(rating: ReviewRating): string {
   switch (rating) {
     case "forgot":
@@ -41,9 +43,23 @@ function feedbackFor(rating: ReviewRating): string {
   }
 }
 
+function buildRecallInteraction(card: (typeof starterDeck)[number]): QuestionInteraction {
+  return {
+    id: `${card.id}:strict-recall`,
+    cardId: card.id,
+    label: "Hatırlama",
+    prompt: card.customerFacing.prompt,
+    instruction: "Cevabı zihninde söyle, sonra göster.",
+    answer: card.customerFacing.answer,
+    explanation: card.customerFacing.explanation,
+    type: "recall",
+  };
+}
+
 export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
   const allCardIds = useMemo(() => starterDeck.map((card) => card.id), []);
   const [activeMode, setActiveMode] = useState<StudyModeId>("all");
+  const [practiceMode, setPracticeMode] = useState<PracticeMode>("recall");
   const [progress, setProgress] = useState<ReviewProgress>(() =>
     loadProgress(allCardIds, todayIso),
   );
@@ -67,7 +83,9 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     : -1;
   const currentQuestion =
     currentCard && currentCardIndex >= 0
-      ? buildQuestionInteraction(currentCard, starterDeck, currentCardIndex)
+      ? practiceMode === "mixed"
+        ? buildQuestionInteraction(currentCard, starterDeck, currentCardIndex)
+        : buildRecallInteraction(currentCard)
       : undefined;
   const isRevealed = Boolean(interactionResult);
 
@@ -102,6 +120,12 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     setFeedback(undefined);
   }
 
+  function handlePracticeModeChange(mode: PracticeMode) {
+    setPracticeMode(mode);
+    setInteractionResult(undefined);
+    setFeedback(undefined);
+  }
+
   function handleResetProgress() {
     setProgress(createInitialProgress(allCardIds, todayIso));
     setInteractionResult(undefined);
@@ -111,9 +135,24 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
 
   const activeModeLabel =
     studyModes.find((mode) => mode.id === activeMode)?.label ?? "Tüm Kartlar";
+  const completedCount = Math.max(0, filteredCards.length - dueCardIds.length);
 
   return (
     <div className="app-shell">
+      <header className="app-header">
+        <div className="brand-block">
+          <span>KPSS Vatandaşlık</span>
+          <h1>Hafıza Meclisi</h1>
+        </div>
+        <div className="session-ledger" aria-label="Günlük çalışma özeti">
+          <span>{activeModeLabel}</span>
+          <strong>
+            {completedCount}/{filteredCards.length}
+          </strong>
+          <span>kart</span>
+        </div>
+      </header>
+
       <DeckSelector
         activeMode={activeMode}
         totalCards={filteredCards.length}
@@ -122,8 +161,26 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
+      <section className="practice-switch" aria-label="Pratik modu">
+        <button
+          aria-pressed={practiceMode === "recall"}
+          className={practiceMode === "recall" ? "is-active" : ""}
+          type="button"
+          onClick={() => handlePracticeModeChange("recall")}
+        >
+          Sade Hatırlama
+        </button>
+        <button
+          aria-pressed={practiceMode === "mixed"}
+          className={practiceMode === "mixed" ? "is-active" : ""}
+          type="button"
+          onClick={() => handlePracticeModeChange("mixed")}
+        >
+          Karma Pratik
+        </button>
+      </section>
+
       <main className="study-stage">
-        <ParliamentScene />
         <div className="recall-stack">
           <RecallCard
             card={currentCard}

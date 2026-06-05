@@ -34,54 +34,41 @@ export function ProgressPanel({
 
   return (
     <aside className="status-rail" aria-label="İlerleme">
-      <section className="stat-block trophy-block">
-        <div className="stat-icon trophy" aria-hidden="true">🏆</div>
-        <span className="mode-chip">{activeModeLabel}</span>
-        <div className="thin-meter">
-          <span style={{ width: `${Math.min(100, ratingTotal(progress) * 8)}%` }} />
-        </div>
-      </section>
+      <div className="status-grid">
+        <section className="stat-block">
+          <span className="stat-label">Mod</span>
+          <strong>{activeModeLabel}</strong>
+          <div className="thin-meter">
+            <span style={{ width: `${Math.min(100, ratingTotal(progress) * 8)}%` }} />
+          </div>
+        </section>
 
-      <section className="clock-block" aria-label="Tekrar zamanı">
-        <div className="clock-face" aria-hidden="true">
-          <span className="clock-hand hour" />
-          <span className="clock-hand minute" />
-        </div>
-        <div className="progress-line">
-          <span style={{ width: `${Math.max(10, (completed / safeTotalCards) * 100)}%` }} />
-        </div>
-        <h2>Tekrar Zamanı</h2>
-        <p>{dueCount > 0 ? `${dueCount} kart sırada` : "Bugünlük tamamlandı"}</p>
-      </section>
+        <section className="stat-block" aria-label="Tekrar zamanı">
+          <span className="stat-label">Tekrar Zamanı</span>
+          <strong>{dueCount > 0 ? `${dueCount} kart` : "Tamamlandı"}</strong>
+          <div className="progress-line">
+            <span style={{ width: `${Math.max(10, (completed / safeTotalCards) * 100)}%` }} />
+          </div>
+        </section>
 
-      <MnemonicPanel card={currentCard} isRevealed={isRevealed} />
-
-      <section className="streak-block">
-        <div className="streak-head">
-          <span className="stat-icon flame" aria-hidden="true">●</span>
+        <section className="stat-block">
+          <span className="stat-label">Gün Seri</span>
           <strong>{progress.streak}</strong>
-          <span>gün seri</span>
-        </div>
-        <div className="streak-bars" aria-hidden="true">
-          {Array.from({ length: 7 }, (_, index) => (
-            <span
-              className={index < Math.min(7, progress.streak) ? "is-lit" : ""}
-              key={index}
-            />
-          ))}
-        </div>
-      </section>
+          <p>Bugünkü ilerleme korunur.</p>
+        </section>
 
-      <section className="satisfaction-block">
-        <div className="gauge" aria-hidden="true">
-          <span style={{ transform: `rotate(${satisfaction * 1.8 - 90}deg)` }} />
+        <section className="stat-block">
+          <span className="stat-label">Seçmen Memnuniyeti</span>
+          <strong>{satisfaction}%</strong>
+          <div className="progress-line">
+            <span style={{ width: `${satisfaction}%` }} />
+          </div>
+        </section>
+
+        <div className="mnemonic-shell">
+          <MnemonicPanel card={currentCard} isRevealed={isRevealed} />
         </div>
-        <h2>Seçmen Memnuniyeti</h2>
-        <div className="progress-line">
-          <span style={{ width: `${satisfaction}%` }} />
-        </div>
-        <strong>{satisfaction}%</strong>
-      </section>
+      </div>
     </aside>
   );
 }

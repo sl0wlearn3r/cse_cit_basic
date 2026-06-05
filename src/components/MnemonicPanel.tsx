@@ -8,18 +8,6 @@ type MnemonicPanelProps = {
 export function MnemonicPanel({ card, isRevealed }: MnemonicPanelProps) {
   return (
     <section className={`mnemonic-panel ${isRevealed ? "is-awake" : ""}`}>
-      <div className="mnemonic-card-stack" aria-hidden="true">
-        <span />
-        <span />
-        <span className="brain-card">♢</span>
-      </div>
-      <div className="dot-row" aria-hidden="true">
-        <span className="is-active" />
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
       {isRevealed && card ? (
         <div className="mnemonic-copy">
           <h2>Anımsama İpucu</h2>

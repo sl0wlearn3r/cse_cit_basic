@@ -60,7 +60,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -74,7 +75,8 @@ button:disabled {
 }
 
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: 4px solid var(--sage);
   outline-offset: 3px;
 }
@@ -213,6 +215,7 @@ input:focus-visible {
 .rail-button,
 .settings-button,
 .practice-switch button,
+.practice-select select,
 .reveal-button,
 .review-button,
 .question-action,
@@ -240,6 +243,7 @@ input:focus-visible {
 .rail-button:hover,
 .settings-button:hover,
 .practice-switch button:hover,
+.practice-select select:hover,
 .reveal-button:hover,
 .review-button:hover,
 .question-action:hover,
@@ -256,6 +260,7 @@ input:focus-visible {
 .rail-button:active,
 .settings-button:active,
 .practice-switch button:active,
+.practice-select select:active,
 .reveal-button:active,
 .review-button:active,
 .question-action:active,
@@ -275,6 +280,7 @@ input:focus-visible {
   width: max-content;
   max-width: 100%;
   display: flex;
+  align-items: center;
   gap: var(--space-2);
   justify-self: center;
   padding: 0.45rem;
@@ -285,6 +291,23 @@ input:focus-visible {
 .practice-switch button.is-active {
   background: var(--sage);
   color: var(--bone-strong);
+}
+
+.practice-select label {
+  padding: 0 var(--space-2);
+  color: var(--sage-dark);
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.practice-select select {
+  min-width: 14rem;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--charcoal) 50%) calc(100% - 1rem)
+      50% / 0.45rem 0.45rem no-repeat,
+    var(--bone-strong);
 }
 
 .study-stage {
@@ -703,7 +726,12 @@ input:focus-visible {
 
   .practice-switch {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: auto minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .practice-select select {
+    min-width: 0;
     width: 100%;
   }
 
@@ -829,6 +857,7 @@ input:focus-visible {
   }
 
   .practice-switch button,
+  .practice-select select,
   .settings-button {
     min-height: 2.65rem;
     padding: 0.55rem 0.7rem;
@@ -924,6 +953,10 @@ input:focus-visible {
   .deck-nav,
   .review-dock {
     grid-template-columns: 1fr;
+  }
+
+  .practice-select label {
+    padding: 0;
   }
 
   .deck-rail-head {

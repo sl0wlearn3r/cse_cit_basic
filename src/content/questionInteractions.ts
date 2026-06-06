@@ -74,7 +74,10 @@ const interactionOrder: QuestionInteractionType[] = [
 ];
 
 function compactAnswer(answer: string, maxLength = 96): string {
-  const compacted = answer.replace(/\s+/g, " ").trim();
+  const compacted = answer
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^(Hayır|Evet)\.\s*/u, "");
 
   if (compacted.length <= maxLength) {
     return compacted;
@@ -136,16 +139,21 @@ function baseInteraction(
   type: QuestionInteractionType,
   label: string,
   instruction: string,
+  prompt = card.customerFacing.prompt,
 ): BaseInteraction {
   return {
     id: `${card.id}:${type}`,
     cardId: card.id,
     label,
-    prompt: card.customerFacing.prompt,
+    prompt,
     instruction,
     answer: card.customerFacing.answer,
     explanation: card.customerFacing.explanation,
   };
+}
+
+function generatedPrompt(card: RecallCard): string {
+  return `${card.topic} başlığında doğru bilgi hangisidir?`;
 }
 
 function buildMultipleChoice(card: RecallCard, deck: RecallCard[]): MultipleChoiceInteraction {
@@ -161,6 +169,7 @@ function buildMultipleChoice(card: RecallCard, deck: RecallCard[]): MultipleChoi
       "multipleChoice",
       "Çoktan Seçmeli",
       "Doğru seçeneği işaretle.",
+      generatedPrompt(card),
     ),
     type: "multipleChoice",
     options: [
@@ -185,6 +194,7 @@ function buildFillBlank(card: RecallCard): FillBlankInteraction {
       "fillBlank",
       "Boşluk Doldur",
       "Anahtar ifadeyi yaz ve kontrol et.",
+      `${card.topic} başlığındaki anahtar cevabı tamamla.`,
     ),
     type: "fillBlank",
     acceptedAnswers: [target, compactAnswer(card.customerFacing.answer)],
@@ -215,6 +225,7 @@ function buildPlacement(card: RecallCard, deck: RecallCard[]): PlacementInteract
       "placement",
       "Yerleştirme",
       "Bilgileri doğru başlıkların altına yerleştir.",
+      "Başlıkları doğru bilgilerle eşleştir.",
     ),
     type: "placement",
     choices: [pairs[1].choice, pairs[2].choice, pairs[0].choice],
@@ -233,8 +244,9 @@ export function buildQuestionInteraction(
   card: RecallCard,
   deck: RecallCard[],
   cardIndex: number,
+  requestedType?: QuestionInteractionType,
 ): QuestionInteraction {
-  const type = interactionOrder[cardIndex % interactionOrder.length];
+  const type = requestedType ?? interactionOrder[cardIndex % interactionOrder.length];
 
   switch (type) {
     case "multipleChoice":

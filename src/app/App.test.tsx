@@ -15,7 +15,9 @@ describe("App", () => {
     expect(screen.getByText("Bugünkü Tekrar")).toBeInTheDocument();
     expect(screen.getByText("Hatırlama")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cevabı Göster" })).toBeInTheDocument();
-    expect(screen.queryByText("Çoktan Seçmeli")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Çoktan Seçmeli", { selector: ".question-type-pill" }),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText("Unuttum")).not.toBeInTheDocument();
   });
 
@@ -36,11 +38,43 @@ describe("App", () => {
   it("uses mixed practice only after the learner opts in", () => {
     render(<App todayIso="2026-06-03" />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Karma Pratik" }));
+    fireEvent.change(screen.getByRole("combobox", { name: "Pratik türü" }), {
+      target: { value: "mixed" },
+    });
 
-    expect(screen.getByText("Çoktan Seçmeli")).toBeInTheDocument();
+    expect(
+      screen.getByText("Çoktan Seçmeli", { selector: ".question-type-pill" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Gensoru/ })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Cevabı Göster" })).not.toBeInTheDocument();
+  });
+
+  it("lets the learner force one generated question style", () => {
+    render(<App todayIso="2026-06-03" />);
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Pratik türü" }), {
+      target: { value: "fillBlank" },
+    });
+
+    expect(
+      screen.getByText("Boşluk Doldur", { selector: ".question-type-pill" }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Boşluk yanıtı")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cevabı Göster" })).not.toBeInTheDocument();
+  });
+
+  it("moves a forgotten card later in the same session instead of repeating it immediately", () => {
+    render(<App todayIso="2026-06-03" />);
+
+    expect(screen.getByRole("heading", { name: "TBMM denetim yolları" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Cevabı Göster" }));
+    fireEvent.click(screen.getByRole("button", { name: "Unuttum" }));
+
+    expect(
+      screen.queryByRole("heading", { name: "TBMM denetim yolları" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Yazılı soru" })).toBeInTheDocument();
   });
 
   it("filters the due queue from the left rail mode buttons", () => {

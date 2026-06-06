@@ -33,6 +33,33 @@ describe("questionInteractions", () => {
     expect(interaction.options.some((option) => option.label.includes("Gensoru"))).toBe(
       true,
     );
+    expect(
+      interaction.options.some((option) => /^(Hayır|Evet)\./.test(option.label)),
+    ).toBe(false);
+  });
+
+  it("can force a specific generated question style", () => {
+    expect(buildQuestionInteraction(starterDeck[0], starterDeck, 0, "fillBlank").type).toBe(
+      "fillBlank",
+    );
+    expect(buildQuestionInteraction(starterDeck[1], starterDeck, 1, "placement").type).toBe(
+      "placement",
+    );
+    expect(
+      buildQuestionInteraction(starterDeck[2], starterDeck, 2, "multipleChoice").type,
+    ).toBe("multipleChoice");
+  });
+
+  it("does not reuse yes-no recall prompts for generated practice questions", () => {
+    const interaction = buildQuestionInteraction(
+      starterDeck[0],
+      starterDeck,
+      0,
+      "multipleChoice",
+    );
+
+    expect(interaction.prompt).toBe("TBMM denetim yolları başlığında doğru bilgi hangisidir?");
+    expect(interaction.prompt).not.toContain("midir");
   });
 
   it("checks fill-in-the-blank answers with normalized Turkish text", () => {

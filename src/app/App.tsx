@@ -6,7 +6,7 @@ import { RecallCard } from "../components/RecallCard";
 import {
   buildQuestionInteraction,
   type InteractionResult,
-  type QuestionInteraction,
+  type QuestionInteractionType,
 } from "../content/questionInteractions";
 import { starterDeck } from "../content/starterDeck";
 import {
@@ -21,6 +21,10 @@ import {
   recordReview,
   saveProgress,
 } from "../state/reviewStore";
+import {
+  advanceSessionQueueAfterReview,
+  mergeDueCardsIntoSessionQueue,
+} from "../state/reviewQueue";
 import { getTodayIsoDate } from "../state/scheduler";
 import type { ReviewProgress, ReviewRating } from "../types/review";
 
@@ -28,7 +32,15 @@ type AppProps = {
   todayIso?: string;
 };
 
-type PracticeMode = "recall" | "mixed";
+type PracticeMode = QuestionInteractionType | "mixed";
+
+const practiceModeOptions: Array<{ id: PracticeMode; label: string }> = [
+  { id: "recall", label: "Sade Hatırlama" },
+  { id: "multipleChoice", label: "Çoktan Seçmeli" },
+  { id: "fillBlank", label: "Boşluk Doldur" },
+  { id: "placement", label: "Yerleştirme" },
+  { id: "mixed", label: "Karma Pratik" },
+];
 
 function feedbackFor(rating: ReviewRating): string {
   switch (rating) {
@@ -43,19 +55,6 @@ function feedbackFor(rating: ReviewRating): string {
   }
 }
 
-function buildRecallInteraction(card: (typeof starterDeck)[number]): QuestionInteraction {
-  return {
-    id: `${card.id}:strict-recall`,
-    cardId: card.id,
-    label: "Hatırlama",
-    prompt: card.customerFacing.prompt,
-    instruction: "Cevabı zihninde söyle, sonra göster.",
-    answer: card.customerFacing.answer,
-    explanation: card.customerFacing.explanation,
-    type: "recall",
-  };
-}
-
 export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
   const allCardIds = useMemo(() => starterDeck.map((card) => card.id), []);
   const [activeMode, setActiveMode] = useState<StudyModeId>("all");
@@ -65,6 +64,7 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
   );
   const [interactionResult, setInteractionResult] = useState<InteractionResult>();
   const [feedback, setFeedback] = useState<string>();
+  const [sessionCardIds, setSessionCardIds] = useState<string[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const filteredCards = useMemo(
@@ -77,7 +77,12 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     () => getDueCards(cardIds, progress, todayIso),
     [cardIds, progress, todayIso],
   );
-  const currentCard = starterDeck.find((card) => card.id === dueCardIds[0]);
+  const sessionDueCardIds = useMemo(() => {
+    const dueSet = new Set(dueCardIds);
+    const queuedDueCardIds = sessionCardIds.filter((cardId) => dueSet.has(cardId));
+    return queuedDueCardIds.length > 0 ? queuedDueCardIds : dueCardIds;
+  }, [dueCardIds, sessionCardIds]);
+  const currentCard = starterDeck.find((card) => card.id === sessionDueCardIds[0]);
   const currentCardIndex = currentCard
     ? starterDeck.findIndex((card) => card.id === currentCard.id)
     : -1;
@@ -85,13 +90,19 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     currentCard && currentCardIndex >= 0
       ? practiceMode === "mixed"
         ? buildQuestionInteraction(currentCard, starterDeck, currentCardIndex)
-        : buildRecallInteraction(currentCard)
+        : buildQuestionInteraction(currentCard, starterDeck, currentCardIndex, practiceMode)
       : undefined;
   const isRevealed = Boolean(interactionResult);
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
+
+  useEffect(() => {
+    setSessionCardIds((currentQueue) =>
+      mergeDueCardsIntoSessionQueue(currentQueue, dueCardIds),
+    );
+  }, [dueCardIds]);
 
   useEffect(() => {
     setInteractionResult(undefined);
@@ -109,13 +120,22 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
     }
 
     const updated = recordReview(progress, currentCard.id, rating, todayIso);
+    const updatedDueCardIds = getDueCards(cardIds, updated, todayIso);
     setProgress(updated);
+    setSessionCardIds((currentQueue) =>
+      advanceSessionQueueAfterReview(
+        currentQueue.length > 0 ? currentQueue : dueCardIds,
+        currentCard.id,
+        updatedDueCardIds,
+      ),
+    );
     setFeedback(feedbackFor(rating));
     setInteractionResult(undefined);
   }
 
   function handleModeChange(modeId: StudyModeId) {
     setActiveMode(modeId);
+    setSessionCardIds([]);
     setInteractionResult(undefined);
     setFeedback(undefined);
   }
@@ -128,6 +148,7 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
 
   function handleResetProgress() {
     setProgress(createInitialProgress(allCardIds, todayIso));
+    setSessionCardIds([]);
     setInteractionResult(undefined);
     setFeedback(undefined);
     setIsSettingsOpen(false);
@@ -161,23 +182,19 @@ export default function App({ todayIso = getTodayIsoDate() }: AppProps) {
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
-      <section className="practice-switch" aria-label="Pratik modu">
-        <button
-          aria-pressed={practiceMode === "recall"}
-          className={practiceMode === "recall" ? "is-active" : ""}
-          type="button"
-          onClick={() => handlePracticeModeChange("recall")}
+      <section className="practice-switch practice-select" aria-label="Pratik modu">
+        <label htmlFor="practice-mode">Pratik türü</label>
+        <select
+          id="practice-mode"
+          value={practiceMode}
+          onChange={(event) => handlePracticeModeChange(event.target.value as PracticeMode)}
         >
-          Sade Hatırlama
-        </button>
-        <button
-          aria-pressed={practiceMode === "mixed"}
-          className={practiceMode === "mixed" ? "is-active" : ""}
-          type="button"
-          onClick={() => handlePracticeModeChange("mixed")}
-        >
-          Karma Pratik
-        </button>
+          {practiceModeOptions.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </section>
 
       <main className="study-stage">

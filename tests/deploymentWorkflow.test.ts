@@ -10,6 +10,7 @@ describe("GitHub Pages workflow", () => {
       "utf8",
     );
 
+    expect(workflow).toContain("      - codex/mobile-adjustments");
     expect(workflow).toContain("      - codex/third-implementation");
   });
 });

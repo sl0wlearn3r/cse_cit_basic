@@ -11,6 +11,7 @@ describe("GitHub Pages workflow", () => {
     );
 
     expect(workflow).toContain("      - codex/mobile-adjustments");
+    expect(workflow).toContain("      - codex/practice-mode-quality");
     expect(workflow).toContain("      - codex/third-implementation");
   });
 });

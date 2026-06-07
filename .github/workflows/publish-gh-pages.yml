@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - codex/mobile-adjustments
+      - codex/practice-mode-quality
       - codex/third-implementation
       - second_implementation
   workflow_dispatch:
